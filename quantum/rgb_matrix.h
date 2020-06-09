@@ -134,35 +134,6 @@ uint8_t     rgb_matrix_get_hue(void);
 uint8_t     rgb_matrix_get_sat(void);
 uint8_t     rgb_matrix_get_val(void);
 
-#ifndef RGBLIGHT_ENABLE
-#    define rgblight_toggle rgb_matrix_toggle
-#    define rgblight_enable rgb_matrix_enable
-#    define rgblight_enable_noeeprom rgb_matrix_enable_noeeprom
-#    define rgblight_disable rgb_matrix_disable
-#    define rgblight_disable_noeeprom rgb_matrix_disable_noeeprom
-#    define rgblight_is_enabled rgb_matrix_is_enabled
-#    define rgblight_step rgb_matrix_step
-#    define rgblight_sethsv rgb_matrix_sethsv
-#    define rgblight_sethsv_noeeprom rgb_matrix_sethsv_noeeprom
-#    define rgblight_step_reverse rgb_matrix_step_reverse
-#    define rgblight_increase_hue rgb_matrix_increase_hue
-#    define rgblight_decrease_hue rgb_matrix_decrease_hue
-#    define rgblight_increase_sat rgb_matrix_increase_sat
-#    define rgblight_decrease_sat rgb_matrix_decrease_sat
-#    define rgblight_increase_val rgb_matrix_increase_val
-#    define rgblight_decrease_val rgb_matrix_decrease_val
-#    define rgblight_increase_speed rgb_matrix_increase_speed
-#    define rgblight_decrease_speed rgb_matrix_decrease_speed
-#    define rgblight_get_speed rgb_matrix_get_speed
-#    define rgblight_mode rgb_matrix_mode
-#    define rgblight_mode_noeeprom rgb_matrix_mode_noeeprom
-#    define rgblight_get_mode rgb_matrix_get_mode
-#    define rgblight_get_hue rgb_matrix_get_hue
-#    define rgblight_get_sat rgb_matrix_get_sat
-#    define rgblight_get_val rgb_matrix_get_val
-#    define rgblight_get_hsv rgb_matrix_get_hsv
-#endif
-
 typedef struct {
     /* Perform any initialisation required for the other driver functions to work. */
     void (*init)(void);

@@ -25,7 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* HID report IDs */
 enum hid_report_ids {
+#if !defined(PROTOCOL_NRF)
     REPORT_ID_KEYBOARD = 1,
+#endif
     REPORT_ID_MOUSE,
     REPORT_ID_SYSTEM,
     REPORT_ID_CONSUMER,
@@ -106,6 +108,10 @@ enum desktop_usages {
 #        define KEYBOARD_REPORT_BITS (NKRO_EPSIZE - 1)
 #        undef NKRO_SHARED_EP
 #        undef MOUSE_SHARED_EP
+//  #elif defined(PROTOCOL_NRF)
+//    #define KEYBOARD_REPORT_SIZE 32
+//    #define KEYBOARD_REPORT_KEYS (KEYBOARD_REPORT_SIZE - 2)
+//    #define KEYBOARD_REPORT_BITS (KEYBOARD_REPORT_SIZE - 1)
 #    else
 #        error "NKRO not supported with this protocol"
 #    endif
@@ -170,10 +176,12 @@ typedef union {
 #endif
 } __attribute__((packed)) report_keyboard_t;
 
+#if !defined(PROTOCOL_NRF)
 typedef struct {
     uint8_t  report_id;
     uint16_t usage;
 } __attribute__((packed)) report_extra_t;
+#endif
 
 typedef struct {
 #ifdef MOUSE_SHARED_EP

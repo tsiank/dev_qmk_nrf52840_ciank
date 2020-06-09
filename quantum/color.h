@@ -20,8 +20,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#if defined(__GNUC__)
-#    define PACKED __attribute__((__packed__))
+#if defined(__GNUC__) && defined(PROTOCOL_NRF)
+#    define PACKED __attribute__((packed))
+#elif defined(__GNUC__)
 #else
 #    define PACKED
 #endif

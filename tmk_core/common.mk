@@ -33,6 +33,14 @@ else ifeq ($(PLATFORM),ARM_ATSAM)
   TMK_COMMON_SRC += $(PLATFORM_COMMON_DIR)/printf.c
 endif
 
+ifeq ($(PLATFORM),NRF_SDK)
+	TMK_COMMON_SRC += $(PLATFORM_COMMON_DIR)/printf.c
+	TMK_COMMON_SRC += $(PLATFORM_COMMON_DIR)/eeprom.c
+  ifeq ($(strip $(AUTO_SHIFT_ENABLE)), yes)
+    TMK_COMMON_SRC += $(CHIBIOS)/os/various/syscalls.c
+  endif
+endif
+
 # Option modules
 BOOTMAGIC_ENABLE ?= no
 VALID_MAGIC_TYPES := yes full lite
@@ -175,3 +183,6 @@ endif
 # Search Path
 VPATH += $(TMK_PATH)/$(COMMON_DIR)
 VPATH += $(TMK_PATH)/$(PLATFORM_COMMON_DIR)
+ifeq ($(PLATFORM),NRF_SDK)
+VPATH += $(TMK_PATH)/$(COMMON_DIR)/nrf
+endif

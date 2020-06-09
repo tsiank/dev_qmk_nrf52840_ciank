@@ -36,6 +36,7 @@ static void init(void) {
     IS31FL3733_init(DRIVER_ADDR_1, 0);
 #    else
     IS31FL3737_init(DRIVER_ADDR_1);
+    IS31FL3737_init(DRIVER_ADDR_2);
 #    endif
     for (int index = 0; index < DRIVER_LED_TOTAL; index++) {
         bool enabled = true;

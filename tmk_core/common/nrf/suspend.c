@@ -6,7 +6,9 @@
 #include "action_util.h"
 #include "mousekey.h"
 #include "host.h"
+#ifdef BACKLIGHT_ENABLE
 #include "backlight.h"
+#endif
 #include "suspend.h"
 #include "wait.h"
 
