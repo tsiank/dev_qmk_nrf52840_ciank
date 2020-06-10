@@ -42,8 +42,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define THIS_DEVICE_ROWS MATRIX_ROWS
 #define THIS_DEVICE_COLS MATRIX_COLS
 
-#define MATRIX_ROW_PINS { PIN7, PIN8, PIN9, PIN10, PIN11 }
-#define MATRIX_COL_PINS { PIN12, PIN13, PIN14, PIN15, PIN16, PIN17, PIN18, PIN19, PIN20, PIN21, PIN22, PIN24, PIN25, PIN26 }
+#define MATRIX_ROW_PINS { PIN1, PIN2, PIN3, PIN4, PIN5 }
+#define MATRIX_COL_PINS { PIN6, PIN7, PIN8, PIN9, PIN10,  PIN11, PIN12, PIN13, PIN14, PIN15, PIN16, PIN17, PIN18, PIN19 }
 
 #define DIODE_DIRECTION COL2ROW
 
@@ -67,7 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifdef RGBLIGHT_ENABLE
 //#define PROGMEM // arm-gcc does not interpret PROGMEM
-#define RGB_DI_PIN GPIO(0,6) //D3     // The pin the LED strip is connected to
+#define RGB_DI_PIN PIN23 //D3     // The pin the LED strip is connected to
 #define RGBLED_NUM 20
 #define RGBLIGHT_ANIMATIONS
 //#define #endifRGBLIGHT_SPLIT 6

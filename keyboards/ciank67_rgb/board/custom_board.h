@@ -8,43 +8,45 @@ extern "C" {
 #define GPIO(port, pin) ((port << 6) | pin)
 
 //Rows
-#define PIN7 GPIO(0,26)
-#define PIN8 GPIO(0,29)
-#define PIN9 GPIO(0,2)
-#define PIN10 GPIO(1,13)
-#define PIN11 GPIO(1,11)
+#define PIN1 GPIO(0,26)
+#define PIN2 GPIO(0,29)
+#define PIN3 GPIO(0,2)
+#define PIN4 GPIO(1,13)
+#define PIN5 GPIO(1,11)
 
 //Columns
-#define PIN12 GPIO(1,9)
-#define PIN13 GPIO(0,28)
-#define PIN14 GPIO(0,12)
-#define PIN15 GPIO(1,10)
-#define PIN16 GPIO(0,7)
-#define PIN17 GPIO(0,3)
-#define PIN18 GPIO(1,6)
-#define PIN19 GPIO(1,4)
-#define PIN20 GPIO(1,2)
-#define PIN21 GPIO(1,0)
-#define PIN22 GPIO(0,24)
-#define PIN24 GPIO(0,22)
-#define PIN25 GPIO(0,13)
-#define PIN26 GPIO(0,20)
-
-//analog battery
-#define PIN23 GPIO(0,5)	
+#define PIN6 GPIO(1,9)
+#define PIN7 GPIO(0,28)
+#define PIN8 GPIO(0,12)
+#define PIN9 GPIO(1,10)
+#define PIN10 GPIO(0,7)
+#define PIN11 GPIO(0,3)
+#define PIN12 GPIO(1,6)
+#define PIN13 GPIO(1,4)
+#define PIN14 GPIO(1,2)
+#define PIN15 GPIO(1,0)
+#define PIN16 GPIO(0,24)
+#define PIN17 GPIO(0,22)
+#define PIN18 GPIO(0,13)
+#define PIN19 GPIO(0,20)
 
 //unused
-#define PIN27 GPIO(0,31)
-#define PIN28 GPIO(0,30)
-#define PIN29 GPIO(0,8)
-#define PIN30 GPIO(0,6)
+#define PIN20 GPIO(0,31)
+#define PIN21 GPIO(0,30)
+#define PIN22 GPIO(0,8)
+#define PIN23 GPIO(0,6)
+#define PIN24 GPIO(0,4)
 
-#define LED_PIN GPIO(0,10)
 #define RESET_PIN GPIO(0,18)
+
+//#define LED_PIN GPIO(0,10)
 //#define SWO_PIN GPIO(1,0)
 //#define DFU_PIN GPIO(1,2)
-#define SWITCH_PIN GPIO(0,4)
-#define POWER_PIN GPIO(0,31)
+//#define SWITCH_PIN GPIO(0,4)
+//#define POWER_PIN GPIO(0,31)
+
+//analog battery
+#define ADC_PIN AIN3
 
 // i2c pins
 #define CONFIG_PIN_SCL GPIO(0,15)

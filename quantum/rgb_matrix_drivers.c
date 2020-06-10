@@ -25,7 +25,7 @@
 
 #if defined(IS31FL3731) || defined(IS31FL3733) || defined(IS31FL3737)
 
-#    include "i2c_master.h"
+#    include "i2c.h"
 
 static void init(void) {
     i2c_init();

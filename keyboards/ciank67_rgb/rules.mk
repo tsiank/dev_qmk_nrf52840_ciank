@@ -1,7 +1,7 @@
 NRF_DEBUG = no
 
 RGBLIGHT_ENABLE = yes
-#RGB_MATRIX_ENABLE = IS31FL3737
+RGB_MATRIX_ENABLE = IS31FL3737
 MOUSEKEY_ENABLE = yes	# Mouse keys
 EXTRAKEY_ENABLE = yes	# Audio control and System control
 CONSOLE_ENABLE = yes	# Console for debug

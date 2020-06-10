@@ -17,7 +17,7 @@
  */
 
 #include "is31fl3737.h"
-#include "i2c_master.h"
+#include "i2c.h"
 #include "wait.h"
 
 // This is a 7-bit address, that gets left-shifted and bit 0
