@@ -73,7 +73,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                       ),
     [_FN]   = LAYOUT(
        _______,  ENT_SLP,   _______, _______,    _______, _______,  _______, BLE_DIS, KC_PSCREEN, KC_SCROLLLOCK, KC_PAUSE, _______,_______, ENT_DFU,
-       _______,  USB_EN, USB_DIS,  DELBNDS,   _______ ,_______,   _______, _______, KC_INSERT, KC_HOME, KC_PGUP, _______,_______, _______, 
+        RM_TOG,  USB_EN, USB_DIS,  DELBNDS,   _______ ,_______,   _______, _______, KC_INSERT, KC_HOME, KC_PGUP, _______,_______, _______, 
         RGBM_TOG,  RGBM_MOD,RGBM_RMOD,  RGBM_M_P,  RGBM_M_B, RGBM_M_R, RGBM_M_SW, _______, _______, _______, KC_DELETE, KC_END,KC_PGDOWN,
         RGB_M_P, RGB_M_B, RGB_M_R, RGB_M_SW, RGB_M_SN, RGB_M_K, RGB_M_X, RGB_M_G, RGB_M_T, ADV_ID0,ADV_ID1, AD_WO_L,BLE_EN,  _______, 
         RGB_TOG, RGBRST, RGB_MOD,  RGB_RMOD, KC_SPC, KC_TRNS,BATT_LV, _______, _______, _______, TO(_RGBST), TO(_MOUSE)

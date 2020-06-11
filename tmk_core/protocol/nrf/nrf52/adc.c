@@ -47,7 +47,7 @@ void adc_init() {
 
 void adc_start() {
   //nrf_saadc_channel_config_t pincfg = NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_VDD);
-  nrf_saadc_channel_config_t pincfg = NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN3); // tsiank
+  nrf_saadc_channel_config_t pincfg = NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(ADC_PIN); // tsiank
   nrf_drv_saadc_channel_init(0, &pincfg);
   nrf_drv_saadc_buffer_convert(adc_buffer, 1);
   nrf_drv_saadc_sample();

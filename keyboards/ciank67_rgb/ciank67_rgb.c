@@ -1,27 +1,5 @@
 #include "ciank67_rgb.h"
 #include "nrf_gpio.h"
-#include "nrf_delay.h"
-#include "nrf_power.h"
-#include "nrfx_power.h"
-#include "nrfx_pwm.h"
-#include "nrf.h"
-#include "app_ble_func.h"
-
-
-#include "matrix.h"
-#undef PACKED
-#include "wait.h"
-
-#ifdef SSD1306OLED
-  #include "ssd1306.h"
-#endif
-
-#ifdef RGBLIGHT_ENABLE
-#include "rgblight.h"
-extern rgblight_config_t rgblight_config;
-#endif
-
-#include "nrf/i2c.h"
 
 // adafruit bootloader, send "dfu" to debug serial port
 #define DFU_MAGIC_UF2_RESET             0x57
@@ -111,22 +89,26 @@ const is31_led g_is31_leds[DRIVER_LED_TOTAL] = {
     {1, A_10,  B_10,  C_10},
     {1, D_10,  E_10,  F_10},
 
-    {0, A_11,   B_11,   C_11},
+/* underglow
    {0, D_11,   E_11,   F_11},
    {0, G_11,   H_11,   I_11},
     {0, J_11,   K_11,   L_11},
-    {0, A_12,   B_12,   C_12},
-   {0, D_12,   E_12,   F_12},
-   {0, G_12,   H_12,   I_12},
-    {0, J_12,   K_12,   L_12},
     {1, A_11,   B_11,   C_11},
    {1, D_11,   E_11,   F_11},
    {1, G_11,   H_11,   I_11},
     {1, J_11,   K_11,   L_11},
+
+    {0, A_11,   B_11,   C_11},
+    {1, J_12,   K_12,   L_12},
+
+    {0, A_12,   B_12,   C_12},
+   {0, D_12,   E_12,   F_12},
+   {0, G_12,   H_12,   I_12},
+    {0, J_12,   K_12,   L_12},
     {1, A_12,   B_12,   C_12},
    {1, D_12,   E_12,   F_12},
-   {1, G_12,   H_12,   I_12},
-    {1, J_12,   K_12,   L_12}
+   {1, G_12,   H_12,   I_12}
+ */
 };
 
 led_config_t g_led_config = {{
@@ -142,9 +124,10 @@ led_config_t g_led_config = {{
     {   9, 48 }, {  27, 48 }, {  43, 48 }, {  59, 48 }, {  75, 48 }, { 91, 48 }, { 107, 48 }, { 123, 48 }, { 139, 48 }, { 155, 48 }, { 171, 48 }, { 187, 48 }, { 203,  48 }, { 219,  48 },
     {   2, 64 }, {  16, 64 }, {  32, 64 }, {  48, 64 }, {  64, 64 }, { 82, 64 }, { 98, 64 }, { 114, 64 }, { 130, 64 }, { 146, 64 }, { 204, 64 }, { 224, 64 },
   // Underglow LEDs
+    /*
     {  18, 16 }, {  50, 16 }, {  82, 16 },  {  114, 16 }, { 146, 16 }, { 178, 16 }, { 220, 16 }, 
     {   4, 32 }, { 220,  32}, 
-    {  18, 48 }, {  50, 48 }, {  82, 48 },  {  114, 48 }, { 146, 48 }, { 178, 48 }, { 220, 48 }, 
+    {  18, 48 }, {  50, 48 }, {  82, 48 },  {  114, 48 }, { 146, 48 }, { 178, 48 }, { 220, 48 }, */
 }, {
     1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1,
     1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1,
@@ -152,8 +135,10 @@ led_config_t g_led_config = {{
     1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1,
     1, 1, 1, 1,    4, 1, 1, 1,     1, 4, 4, 4,
   // Underglow LEDs
+  /*
         2, 2, 2, 2,2, 2, 2,
     2,                            2,
         2, 2, 2, 2,2, 2, 2
+*/
 }};
 #endif
