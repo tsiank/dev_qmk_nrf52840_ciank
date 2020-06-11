@@ -56,13 +56,20 @@
 )
 
 #ifdef RGBLIGHT_ENABLE
-#define RGB_DI_PIN 6
-#define RGBLED_NUM 20
-#define RGBLIGHT_ANIMATIONS
-//#define #endifRGBLIGHT_SPLIT 6
+	#define RGB_DI_PIN 6
+	#define RGBLED_NUM 20
+	#define RGBLIGHT_ANIMATIONS
+	//#define #endifRGBLIGHT_SPLIT 6
 #endif
 
 #ifdef RGB_MATRIX_ENABLE
+	#define DRIVER_ADDR_1 0b1010000
+	#define DRIVER_ADDR_2 0b1011111
+	#define DRIVER_COUNT 2
+	#define DRIVER_1_LED_TOTAL 47
+	#define DRIVER_2_LED_TOTAL 36
+	#define DRIVER_LED_TOTAL DRIVER_1_LED_TOTAL + DRIVER_2_LED_TOTAL
+
 	#define PERMISSVIE_HOLD
 	#define IGNORE_MOD_TAP_INTERRUPT
 	#define TAPPING_FORCE_HOLD
@@ -72,13 +79,6 @@
 	#define RGB_MATRIX_FRAMEBUFFER_EFFECTS
 	#define RGB_MATRIX_LED_PROCESS_LIMIT 20
 	#define RGB_MATRIX_LED_FLUSH_LIMIT 26
-	
-	#define DRIVER_ADDR_1 0b1010000
-	#define DRIVER_ADDR_2 0b1011111
-	#define DRIVER_COUNT 2
-	#define DRIVER_1_LED_TOTAL 47
-	#define DRIVER_2_LED_TOTAL 36
-	#define DRIVER_LED_TOTAL DRIVER_1_LED_TOTAL + DRIVER_2_LED_TOTAL
 #endif
 /*
  * Feature disable options
@@ -98,14 +98,6 @@
 //#define NO_ACTION_MACRO
 //#define NO_ACTION_FUNCTION
 
-#define RESET_PIN 18
-
-//#define LED_PIN GPIO(0,10)
-//#define SWO_PIN GPIO(1,0)
-//#define DFU_PIN GPIO(1,2)
-//#define SWITCH_PIN GPIO(0,4)
-//#define POWER_PIN GPIO(0,31)
-
 //analog battery measure
 #define ADC_PIN NRF_SAADC_INPUT_AIN3
 
@@ -113,20 +105,12 @@
 //#define NRF_LOG_BACKEND_SERIAL_USES_UART 0
 //#define NRF_LOG_BACKEND_SERIAL_UART_TX_PIN 5
 #define NRF_LOG_BACKEND_UART_TX_PIN 8
-//#define DEBUG
-// Low frequency clock source to be used by the SoftDevice
-#ifdef S210
-// #define NRF_CLOCK_LFCLKSRC      NRF_CLOCK_LFCLKSRC_XTAL_20_PPM
-#else
 
 // NRF_CLOCK_LF_SRC_RC - internal oscillator
 // NRF_CLOCK_LF_SRC_XTAL - external crystal
-// using E73 internal oscillator (assume there's no external crystal soldered)
 #define NRF_CLOCK_LFCLKSRC      {.source        = NRF_CLOCK_LF_SRC_XTAL,            \
                                  .rc_ctiv       = 16,                                \
                                  .rc_temp_ctiv  = 2,                                \
                                  .xtal_accuracy = 0}
-
-#endif
 
 #endif
