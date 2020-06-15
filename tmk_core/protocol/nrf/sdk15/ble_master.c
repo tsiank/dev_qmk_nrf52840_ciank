@@ -71,15 +71,29 @@
 #include "nrf_ble_qwr.h"
 #include "nrf_pwr_mgmt.h"
 #include "nrf_fstorage.h"
+#include "nrfx_power.h"
 
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
+#include "nrf_drv_saadc.h"
 
 #include "ble_central.h"
 #include "ble_dongle.h"
 #include "adc.h"
 #include "ble_common.h"
+
+#ifdef RGBLIGHT_ENABLE
+#include "progmem.h"
+#include "rgblight.h"
+#endif
+#ifdef RGB_MATRIX_ENABLE
+#include "nrf/i2c.h"
+#endif
+
+#ifdef POWER_SAVE_TIMEOUT
+static uint16_t power_save_counter = 0;
+#endif
 
 #define SHIFT_BUTTON_ID                     1                                          /**< Button used as 'SHIFT' Key. */
 
@@ -180,6 +194,13 @@ static bool m_caps_on = false; /**< Variable to indicate if Caps Lock is turned 
 static pm_peer_id_t m_peer_id; /**< Device reference handle to the current bonded central. */
 static uint32_t m_whitelist_peer_cnt; /**< Number of peers currently in the whitelist. */
 static pm_peer_id_t m_whitelist_peers[BLE_GAP_WHITELIST_ADDR_MAX_COUNT]; /**< List of peers currently in the whitelist. */
+
+static void         sleep_mode_enter(void);
+
+bool has_usb(void) {
+  return (nrfx_power_usbstatus_get() == NRFX_POWER_USB_STATE_CONNECTED
+    || nrfx_power_usbstatus_get() == NRFX_POWER_USB_STATE_READY);
+}
 
 static ble_uuid_t m_adv_uuids[] = { { BLE_UUID_HUMAN_INTERFACE_DEVICE_SERVICE,
     BLE_UUID_TYPE_BLE } };
@@ -389,21 +410,33 @@ static void ble_advertising_error_handler(uint32_t nrf_error) {
 
 /**@brief Function for performing a battery measurement, and update the Battery Level characteristic in the Battery Service.
  */
-static void battery_level_update(void) {
-  ret_code_t err_code;
-  uint8_t battery_level;
+void battery_level_update(nrf_saadc_value_t value, uint16_t size) {
+    ret_code_t err_code;
+    uint8_t    battery_level;
 
-  adc_start();
-  battery_level = get_vcc() / 30;
+    uint32_t voltage = (value * 6 * 600 * 143 / 256 / 100 / size)* 1.13;
+    NRF_LOG_INFO("Battery voltage: %d mV", voltage);
 
-  err_code = ble_bas_battery_level_update(&m_bas, battery_level,
-      BLE_CONN_HANDLE_ALL);
-  if ((err_code != NRF_SUCCESS) && (err_code != NRF_ERROR_BUSY)
-      && (err_code != NRF_ERROR_RESOURCES) && (err_code != NRF_ERROR_FORBIDDEN)
-      && (err_code != NRF_ERROR_INVALID_STATE)
-      && (err_code != BLE_ERROR_GATTS_SYS_ATTR_MISSING)) {
-    APP_ERROR_HANDLER(err_code);
-  }
+    if (voltage > 4200) {
+        battery_level = 100;
+    } else if (voltage > 4000) {
+        battery_level = 82 + 18 * (voltage - 4000) / 200;
+    } else if (voltage > 3800) {
+        battery_level = 44 + 38 * (voltage - 3800) / 200;
+    } else if (voltage > 3740) {
+        battery_level = 20 + 24 * (voltage - 3740) / 160;
+    } else if (voltage > 3680) {
+        battery_level = 10 + (voltage - 3680) / 6;
+    } else if (voltage > 3000) {
+        battery_level = (voltage - 3000) / 68;
+    } else {
+        battery_level = 0;
+    }
+
+    err_code = ble_bas_battery_level_update(&m_bas, battery_level, BLE_CONN_HANDLE_ALL);
+    if ((err_code != NRF_SUCCESS) && (err_code != NRF_ERROR_BUSY) && (err_code != NRF_ERROR_RESOURCES) && (err_code != NRF_ERROR_FORBIDDEN) && (err_code != NRF_ERROR_INVALID_STATE) && (err_code != BLE_ERROR_GATTS_SYS_ATTR_MISSING)) {
+        APP_ERROR_HANDLER(err_code);
+    }
 }
 
 /**@brief Function for handling the Battery measurement timer timeout.
@@ -413,9 +446,31 @@ static void battery_level_update(void) {
  * @param[in]   p_context   Pointer used for passing some arbitrary information (context) from the
  *                          app_start_timer() call to the timeout handler.
  */
-static void battery_level_meas_timeout_handler(void * p_context) {
-  UNUSED_PARAMETER(p_context);
-  battery_level_update();
+static void battery_level_meas_timeout_handler(void *p_context) {
+    UNUSED_PARAMETER(p_context);
+		if (!has_usb()){
+	#ifdef POWER_SAVE_TIMEOUT
+		    if (power_save_counter++ > POWER_SAVE_TIMEOUT / 2) {
+			#ifdef RGBLIGHT_ENABLE
+			       rgblight_disable();
+			#endif
+		        sleep_mode_enter();
+		    }
+	#endif
+
+#ifdef KBD_WDT_ENABLE
+    nrf_drv_wdt_channel_feed(m_channel_id);
+#endif
+    adc_start();
+		}
+}
+
+void reset_power_save_counter() {
+	if (!has_usb()){
+#ifdef POWER_SAVE_TIMEOUT
+    		power_save_counter = 0;
+#endif
+	}
 }
 
 /**@brief Function for the Timer initialization.
@@ -435,6 +490,16 @@ void timers_init(void (*main_task)(void*)) {
 
   err_code = app_timer_create(&main_task_timer_id, APP_TIMER_MODE_REPEATED,
       main_task);
+  APP_ERROR_CHECK(err_code);
+}
+
+/**@brief Function for starting timers.
+ */
+void timers_start(void) {
+  ret_code_t err_code;
+
+  err_code = app_timer_start(m_battery_timer_id, BATTERY_LEVEL_MEAS_INTERVAL,
+      NULL);
   APP_ERROR_CHECK(err_code);
 }
 
@@ -753,14 +818,29 @@ void conn_params_init(void) {
   APP_ERROR_CHECK(err_code);
 }
 
-/**@brief Function for starting timers.
- */
-void timers_start(void) {
-  ret_code_t err_code;
+static void sleep_mode_enter(void) {
+#ifdef IS31FL3737
+    i2c_stop();
+#endif
 
-  err_code = app_timer_start(m_battery_timer_id, BATTERY_LEVEL_MEAS_INTERVAL,
-      NULL);
-  APP_ERROR_CHECK(err_code);
+    NRF_LOG_INFO("Sleep mode");
+    ret_code_t err_code;
+
+    static const uint8_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
+    static const uint8_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
+    for (uint8_t i = 0; i < MATRIX_ROWS; i++) {
+        nrf_gpio_cfg_output(row_pins[i]);
+        nrf_gpio_pin_clear(row_pins[i]);
+    }
+    for (uint8_t i = 0; i < MATRIX_COLS; i++) {
+        nrf_gpio_cfg_sense_input(col_pins[i], NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW);
+    }
+
+    // Go to system-off mode (this function will not return; wakeup will cause a reset).
+    err_code = sd_power_system_off();
+    while (1) {
+    }
+    APP_ERROR_CHECK(err_code);
 }
 
 /**@brief Function for handling HID events.
@@ -827,6 +907,9 @@ static void on_adv_evt(ble_adv_evt_t ble_adv_evt) {
     break;
 
   case BLE_ADV_EVT_IDLE:
+			#ifdef RGBLIGHT_ENABLE
+			       rgblight_disable();
+			#endif
     sleep_mode_enter();
     break;
 

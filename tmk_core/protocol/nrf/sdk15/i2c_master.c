@@ -61,6 +61,7 @@ void i2c_uninit(void) {
   nrfx_twim_uninit(&m_twim_master);
 }
 
+#ifdef IS31FL3737
 static void i2c_write_register(uint8_t addr, uint8_t reg, uint8_t data) {
     twi_transfer_buffer[0] = reg;
     twi_transfer_buffer[1] = data;
@@ -70,7 +71,7 @@ static void i2c_write_register(uint8_t addr, uint8_t reg, uint8_t data) {
 void i2c_start(void) {
     nrfx_twim_enable(&m_twim_master);
     twim_enable = true;
-#ifdef IS31FL3737
+
     i2c_write_register(DRIVER_ADDR_1, 0xFE, 0xC5);
     i2c_write_register(DRIVER_ADDR_1, 0xFD, 0x03);
     i2c_write_register(DRIVER_ADDR_1, 0x00, 0x01);
@@ -78,11 +79,9 @@ void i2c_start(void) {
     i2c_write_register(DRIVER_ADDR_2, 0xFE, 0xC5);
     i2c_write_register(DRIVER_ADDR_2, 0xFD, 0x03);
     i2c_write_register(DRIVER_ADDR_2, 0x00, 0x01);
-#endif
 }
 
 void i2c_stop(void) {
-#ifdef IS31FL3737
     i2c_write_register(DRIVER_ADDR_1, 0xFE, 0xC5);
     i2c_write_register(DRIVER_ADDR_1, 0xFD, 0x03);
     i2c_write_register(DRIVER_ADDR_1, 0x00, 0x00);
@@ -90,10 +89,11 @@ void i2c_stop(void) {
     i2c_write_register(DRIVER_ADDR_2, 0xFE, 0xC5);
     i2c_write_register(DRIVER_ADDR_2, 0xFD, 0x03);
     i2c_write_register(DRIVER_ADDR_2, 0x00, 0x00);
-#endif
+
     twim_enable = false;
     nrfx_twim_disable(&m_twim_master);
 }
+#endif
 
 uint8_t i2c_transmit(uint8_t address, uint8_t* data, uint16_t length, uint16_t timeout)
 {

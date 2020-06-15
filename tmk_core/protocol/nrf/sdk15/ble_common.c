@@ -14,6 +14,9 @@
 #include "pin_assign.h"
 #endif
 
+#ifdef RGB_MATRIX_ENABLE
+#include "nrf/i2c.h"
+#endif
 
 
 /**@brief Function for placing the application in low power state while waiting for events.
@@ -108,21 +111,17 @@ void delete_bond_id(uint8_t id) {
  *
  * @note This function will not return.
  */
-void sleep_mode_enter(void) {
-  extern const uint32_t row_pins[THIS_DEVICE_ROWS];
-  extern const uint32_t col_pins[THIS_DEVICE_COLS];
-  int i;
+void deep_sleep_mode_enter(void) {
+#ifdef IS31FL3737
+    i2c_stop();
+#endif
 
-  if (nrfx_power_usbstatus_get() == NRFX_POWER_USB_STATE_CONNECTED ||
-      nrfx_power_usbstatus_get() == NRFX_POWER_USB_STATE_READY) {
-    return;
-  }
-  for (i=0; i<THIS_DEVICE_ROWS; i++) {
-    nrf_gpio_pin_clear(row_pins[i]);
-  }
-  for (i=0; i<THIS_DEVICE_COLS; i++) {
-    nrf_gpio_cfg_sense_input(col_pins[i], NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW);
-  }
+    NRF_LOG_INFO("Deep sleep mode");
+    ret_code_t err_code;
 
-  sd_power_system_off();
+    // Go to system-off mode (this function will not return; wakeup will cause a reset).
+    err_code = sd_power_system_off();
+    while (1) {
+    }
+    APP_ERROR_CHECK(err_code);
 }

@@ -39,7 +39,7 @@ void delete_bonds(void);
 void delete_bond_id(uint8_t id);
 
 void start_dfu();
-void sleep_mode_enter();
+void deep_sleep_mode_enter();
 
 uint16_t get_vcc();
 

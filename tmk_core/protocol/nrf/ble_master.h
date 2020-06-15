@@ -10,6 +10,7 @@
 //#define NRF_LOG_MODULE_NAME "APP"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
+#include "nrf_drv_saadc.h"
 
 #include "adc.h"
 
@@ -37,13 +38,14 @@ void logger_init(void);
 void main_task_start(uint8_t interval_ms);
 void main_loop(void);
 void advertising_start(void);
-void battery_level_update(void);
+void reset_power_save_counter(void);
+void battery_level_update(nrf_saadc_value_t value, uint16_t size);
 void timers_init(void (*main_task)(void*));
 void gap_params_init(void);
 void services_init(void);
 void conn_params_init(void);
 void timers_start(void);
-void sleep_mode_enter(void);
+void deep_sleep_mode_enter(void);
 void ble_stack_init(void);
 void scheduler_init(void);
 void peer_manager_init();

@@ -49,7 +49,6 @@ enum custom_keycodes {
     DEL_ID4,              /* Delete bonding of PeerID 4           */
     ENT_DFU,              /* Start bootloader                     */
     ENT_SLP,              /* Deep sleep mode                      */
-    REBOOT,
     RGBRST,
    RM_TOG
 };
@@ -73,7 +72,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,    _______, _______, KC_TRNS,              RSFT_T(KC_SPC),       KC_TRNS,  _______, _______, _______,    _______, _______, _______
                       ),
     [_FN]   = LAYOUT(
-       REBOOT,  ENT_SLP,   _______, _______,    _______, _______,  _______, BLE_DIS, KC_PSCREEN, KC_SCROLLLOCK, KC_PAUSE, _______,_______, ENT_DFU,
+       _______,  ENT_SLP,   _______, _______,    _______, _______,  _______, BLE_DIS, KC_PSCREEN, KC_SCROLLLOCK, KC_PAUSE, _______,_______, ENT_DFU,
         RM_TOG,  USB_EN, USB_DIS,  DELBNDS,   _______ ,_______,   _______, _______, KC_INSERT, KC_HOME, KC_PGUP, _______,_______, _______, 
         RGBM_TOG,  RGBM_MOD,RGBM_RMOD,  RGBM_M_P,  RGBM_M_B, RGBM_M_R, RGBM_M_SW, _______, _______, _______, KC_DELETE, KC_END,KC_PGDOWN,
         RGB_M_P, RGB_M_B, RGB_M_R, RGB_M_SW, RGB_M_SN, RGB_M_K, RGB_M_X, RGB_M_G, RGB_M_T, ADV_ID0,ADV_ID1, AD_WO_L,BLE_EN,  _______, 
@@ -116,7 +115,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
         case RM_TOG:
             if (record->event.pressed) {
-            	#ifdef RGB_MATRIX_ENABLE
+            	#ifdef IS31FL3737
                 if (rgb_matrix_config.enable) {
                     i2c_stop();
                 } else {
@@ -190,11 +189,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       sprintf(str, "%4dmV", get_vcc());
       send_string(str);
       return false;
-      
-        case REBOOT:
-                NVIC_SystemReset();
- return false;
-            
     case ENT_DFU:
       bootloader_jump();
       return false;
@@ -203,10 +197,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   else if (!record->event.pressed) {
     switch (keycode) {
     case ENT_SLP:
-      #ifdef RGBLIGHT_ENABLE
-          rgblight_disable();
-      #endif
-      deep_sleep_mode_enter();
+      sleep_mode_enter();
       return false;
     }
   }

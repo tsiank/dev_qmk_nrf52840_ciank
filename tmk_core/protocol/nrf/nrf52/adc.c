@@ -15,45 +15,53 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "nrf_drv_saadc.h"
+#include <stdint.h>
 #include "adc.h"
-#include "nrf_assert.h"
-#include "app_error.h"
-
-//#define NRF_LOG_MODULE_NAME "ADC"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
+#include "nrf_drv_saadc.h"
+#include "nrfx_saadc.h"
+#include "ble_master.h"
 
-static nrf_saadc_value_t       adc_buffer[1]; /**< ADC buffer. */
-static void adc_event_handler(nrf_drv_saadc_evt_t const * p_event)
-{
-  NRF_LOG_DEBUG("conversion start\r\n");
-    if (p_event->type == NRF_DRV_SAADC_EVT_DONE)
-    {
-        uint32_t i;
-        for (i = 0; i < p_event->data.done.size; i++)
-        {
-            NRF_LOG_DEBUG("Current sample value: %d mV\r\n", get_vcc());
+#define SAMPLES_BUFFER_LEN 4
+static nrf_saadc_value_t adc_buffer[2][SAMPLES_BUFFER_LEN];
+
+static void adc_event_handler(nrf_drv_saadc_evt_t const* p_event) {
+    if (p_event->type == NRF_DRV_SAADC_EVT_DONE) {
+        ret_code_t        err_code;
+        nrf_saadc_value_t value = 0;
+        for (int i = 0; i < p_event->data.done.size; i++) {
+            value += p_event->data.done.p_buffer[i];
+            // NRF_LOG_INFO("%d asdlfkj %d\r\n", i, p_event->data.done.p_buffer[i]);
         }
-//        nrf_adc_disable();
+
+        battery_level_update(value, p_event->data.done.size);
+
+        err_code = nrfx_saadc_buffer_convert(p_event->data.done.p_buffer, SAMPLES_BUFFER_LEN);
+
+        APP_ERROR_CHECK(err_code);
     }
 }
 
 void adc_init() {
-  nrf_drv_saadc_config_t adccfg = NRF_DRV_SAADC_DEFAULT_CONFIG;
-  adccfg.resolution = NRF_SAADC_RESOLUTION_8BIT;
-  nrf_drv_saadc_init(&adccfg, adc_event_handler);
+    ret_code_t                 err_code;
+    nrf_saadc_channel_config_t channel_config = NRFX_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN3);
+
+    err_code = nrf_drv_saadc_init(NULL, adc_event_handler);
+    APP_ERROR_CHECK(err_code);
+
+    err_code = nrfx_saadc_channel_init(0, &channel_config);
+    APP_ERROR_CHECK(err_code);
+
+    err_code = nrfx_saadc_buffer_convert(adc_buffer[0], SAMPLES_BUFFER_LEN);
+    APP_ERROR_CHECK(err_code);
+
+    err_code = nrfx_saadc_buffer_convert(adc_buffer[1], SAMPLES_BUFFER_LEN);
+    APP_ERROR_CHECK(err_code);
 }
 
-void adc_start() {
-  //nrf_saadc_channel_config_t pincfg = NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_VDD);
-  nrf_saadc_channel_config_t pincfg = NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(ADC_PIN); // tsiank
-  nrf_drv_saadc_channel_init(0, &pincfg);
-  nrf_drv_saadc_buffer_convert(adc_buffer, 1);
-  nrf_drv_saadc_sample();
-}
+void adc_start() { nrfx_saadc_sample(); }
 
 uint16_t get_vcc() {
-  //return ((uint32_t)adc_buffer[0]*6*600/255);
-  return ((uint32_t)adc_buffer[0]*6*600/255) * 4200 / 2456;
+  return ((uint32_t)adc_buffer[2]*6*600/255) * 4200 / 2456;
 }

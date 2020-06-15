@@ -43,10 +43,10 @@
 
 #define TAPPING_TERM 200
 
-// Enter sleep modes after 600 seconds
-#define POWER_SAVE_TIMEOUT 1200
-
 #define IS_LEFT_HAND  true
+
+// Enter sleep modes after 600 seconds
+#define POWER_SAVE_TIMEOUT 100
 
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
 #define LOCKING_SUPPORT_ENABLE
@@ -66,12 +66,10 @@
 #endif
 
 #ifdef RGB_MATRIX_ENABLE
-	#define DRIVER_ADDR_1 0b1010000
-	#define DRIVER_ADDR_2 0b1011111
-	#define DRIVER_COUNT 2
-	#define DRIVER_1_LED_TOTAL 47
-	#define DRIVER_2_LED_TOTAL 36
-	#define DRIVER_LED_TOTAL DRIVER_1_LED_TOTAL + DRIVER_2_LED_TOTAL
+// The pin connected to the data pin of the LEDs
+#define RGB_DI_PIN 6
+// The number of LEDs connected
+#define DRIVER_LED_TOTAL 20
 
 	#define PERMISSVIE_HOLD
 	#define IGNORE_MOD_TAP_INTERRUPT
