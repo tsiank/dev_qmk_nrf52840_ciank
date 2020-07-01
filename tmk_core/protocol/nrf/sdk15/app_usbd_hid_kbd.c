@@ -432,17 +432,16 @@ static size_t hid_kbd_get_class_descriptors_length(app_usbd_class_inst_t const *
     return p_hinst->p_subclass_desc[desc_num]->size;
 }
 
-
-static uint8_t hid_kbd_get_class_descriptors_data(app_usbd_class_inst_t const * p_inst,
-                                                  uint8_t                       desc_num,
-                                                  uint32_t                      cur_byte)
+static const uint8_t * hid_kbd_get_class_descriptors_data(app_usbd_class_inst_t const * p_inst,
+                                                          uint8_t                       desc_num,
+                                                          uint32_t                      cur_byte)
 {
     app_usbd_hid_kbd_t const  * p_kbd   = hid_kbd_get(p_inst);
     app_usbd_hid_inst_t const * p_hinst = &p_kbd->specific.inst.hid_inst;
+    const uint8_t * p_byte = &p_hinst->p_subclass_desc[desc_num]->p_data[cur_byte];
 
-    return p_hinst->p_subclass_desc[desc_num]->p_data[cur_byte];
+    return p_byte;
 }
-
 
 static bool hid_kbd_feed_descriptors(app_usbd_class_descriptor_ctx_t                   * p_ctx,
                                      app_usbd_class_inst_t const                       * p_inst,
@@ -518,27 +517,6 @@ static bool hid_kbd_feed_descriptors(app_usbd_class_descriptor_ctx_t            
     APP_USBD_CLASS_DESCRIPTOR_END();
 }
 
-static bool hid_kbd_feed_subclass_descriptor(app_usbd_class_descriptor_ctx_t  * p_ctx,
-                                                  app_usbd_class_inst_t const * p_inst,
-                                                  uint8_t                     * p_buff,
-                                                  size_t                        max_size,
-                                                  uint8_t                       index)
-{
-    APP_USBD_CLASS_DESCRIPTOR_BEGIN(p_ctx, p_buff, max_size);
-
-    /* PHYSICAL AND REPORT DESCRIPTORS */
-    static uint32_t cur_byte      = 0;
-    static size_t   sub_desc_size = 0;
-    sub_desc_size = hid_kbd_get_class_descriptors_length(p_inst, index);
-
-    for (cur_byte = 0; cur_byte <= sub_desc_size; cur_byte++)
-    {
-        APP_USBD_CLASS_DESCRIPTOR_WRITE(hid_kbd_get_class_descriptors_data(p_inst, index, cur_byte));
-    }
-
-    APP_USBD_CLASS_DESCRIPTOR_END();
-}
-
 #include "host.h"
 
 #define QUEUE_LEN 16
@@ -582,14 +560,40 @@ int usbd_send_keyboard_buffered(app_usbd_hid_kbd_t const *  p_kbd) {
   }
   return 0;
 }
+
+static ret_code_t hid_kbd_on_idle(app_usbd_class_inst_t const * p_inst, uint8_t report_id)
+{
+    UNUSED_PARAMETER(report_id);
+    app_usbd_hid_kbd_t const * p_kbd    = (app_usbd_hid_kbd_t const *)p_inst;
+    app_usbd_hid_kbd_ctx_t      * p_kbd_ctx = hid_kbd_ctx_get(p_kbd);
+    nrf_drv_usbd_ep_t ep_addr = app_usbd_hid_epin_addr_get(p_inst);
+    app_usbd_hid_state_flag_clr(&p_kbd_ctx->hid_ctx, APP_USBD_HID_STATE_FLAG_TRANS_IN_PROGRESS);
+
+    app_usbd_hid_report_buffer_t const * p_rep_buffer = hid_kbd_rep_buffer_get(p_kbd);
+    NRF_DRV_USBD_TRANSFER_IN(transfer, p_rep_buffer->p_buff, p_rep_buffer->size);
+
+    ret_code_t ret;
+    CRITICAL_REGION_ENTER();
+    ret = app_usbd_ep_transfer(ep_addr, &transfer);
+    if (ret == NRF_SUCCESS)
+    {
+        app_usbd_hid_state_flag_set(&p_kbd_ctx->hid_ctx, APP_USBD_HID_STATE_FLAG_TRANS_IN_PROGRESS);
+    }
+    CRITICAL_REGION_EXIT();
+    
+    return NRF_SUCCESS;
+}
+
 /** @} */
 
 const app_usbd_hid_methods_t app_usbd_hid_kbd_methods = {
-    .on_get_report   = hid_kbd_on_get_report,
-    .on_set_report   = hid_kbd_on_set_report,
-    .ep_transfer_in  = hid_kbd_ep_transfer_in,
-    .ep_transfer_out = NULL,
-    .feed_subclass_descriptor = hid_kbd_feed_subclass_descriptor,
+    .on_get_report              = hid_kbd_on_get_report,
+    .on_set_report              = hid_kbd_on_set_report,
+    .ep_transfer_in             = hid_kbd_ep_transfer_in,
+    .ep_transfer_out            = NULL,
+    .subclass_length            = hid_kbd_get_class_descriptors_length,
+    .subclass_data              = hid_kbd_get_class_descriptors_data,
+    .on_idle                    = hid_kbd_on_idle,
 };
 
 const app_usbd_class_methods_t app_usbd_hid_kbd_class_methods = {

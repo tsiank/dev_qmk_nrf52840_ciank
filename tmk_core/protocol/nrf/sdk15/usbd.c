@@ -47,6 +47,20 @@
 #include "usb_descriptor.h"
 #include "cli.h"
 
+#include "nrf.h"
+#include "nrf_drv_usbd.h"
+#include "nrf_drv_clock.h"
+#include "nrf_gpio.h"
+#include "nrf_drv_power.h"
+
+#include "app_usbd.h"
+#include "app_usbd_core.h"
+
+
+//#include "app_usbd_hid_mouse.h"
+//#include "app_usbd_hid_kbd.h"
+
+
 #ifdef RGBLIGHT_ENABLE
 #include "rgblight.h"
 #endif

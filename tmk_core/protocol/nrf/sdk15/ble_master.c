@@ -594,8 +594,7 @@ static void dis_init(void) {
   ble_srv_ascii_to_utf8(&dis_init_obj.manufact_name_str, STR(MANUFACTURER));
   dis_init_obj.p_pnp_id = &pnp_id;
 
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(&dis_init_obj.dis_attr_md.read_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(&dis_init_obj.dis_attr_md.write_perm);
+  dis_init_obj.dis_char_rd_sec = SEC_JUST_WORKS;
 
   err_code = ble_dis_init(&dis_init_obj);
   APP_ERROR_CHECK(err_code);
@@ -614,15 +613,9 @@ static void bas_init(void) {
   bas_init_obj.p_report_ref = NULL;
   bas_init_obj.initial_batt_level = 100;
 
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &bas_init_obj.battery_level_char_attr_md.cccd_write_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &bas_init_obj.battery_level_char_attr_md.read_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(
-      &bas_init_obj.battery_level_char_attr_md.write_perm);
-
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &bas_init_obj.battery_level_report_read_perm);
+  bas_init_obj.bl_rd_sec        = SEC_JUST_WORKS;
+  bas_init_obj.bl_cccd_wr_sec   = SEC_JUST_WORKS;
+  bas_init_obj.bl_report_rd_sec = SEC_JUST_WORKS;
 
   err_code = ble_bas_init(&m_bas, &bas_init_obj);
   APP_ERROR_CHECK(err_code);
@@ -650,70 +643,53 @@ void composite_service_init(void) {
   p_input_report->rep_ref.report_id = COMPOSITE_REPORT_ID_KEYBOARD;
   p_input_report->rep_ref.report_type = BLE_HIDS_REP_TYPE_INPUT;
 
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &p_input_report->security_mode.cccd_write_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &p_input_report->security_mode.read_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &p_input_report->security_mode.write_perm);
+  p_input_report->sec.cccd_wr = SEC_JUST_WORKS;
+  p_input_report->sec.wr      = SEC_JUST_WORKS;
+  p_input_report->sec.rd      = SEC_JUST_WORKS;
 
   p_input_report = &input_report_array[COMPOSITE_REPORT_INDEX_MOUSE];
   p_input_report->max_len = 5;
   p_input_report->rep_ref.report_id = COMPOSITE_REPORT_ID_MOUSE;
   p_input_report->rep_ref.report_type = BLE_HIDS_REP_TYPE_INPUT;
 
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &p_input_report->security_mode.cccd_write_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &p_input_report->security_mode.read_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &p_input_report->security_mode.write_perm);
+  p_input_report->sec.cccd_wr = SEC_JUST_WORKS;
+  p_input_report->sec.wr      = SEC_JUST_WORKS;
+  p_input_report->sec.rd      = SEC_JUST_WORKS;
 
   p_input_report = &input_report_array[COMPOSITE_REPORT_INDEX_SYSTEM];
   p_input_report->max_len = 2;
   p_input_report->rep_ref.report_id = COMPOSITE_REPORT_ID_SYSTEM;
   p_input_report->rep_ref.report_type = BLE_HIDS_REP_TYPE_INPUT;
 
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &p_input_report->security_mode.cccd_write_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &p_input_report->security_mode.read_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &p_input_report->security_mode.write_perm);
+  p_input_report->sec.cccd_wr = SEC_JUST_WORKS;
+  p_input_report->sec.wr      = SEC_JUST_WORKS;
+  p_input_report->sec.rd      = SEC_JUST_WORKS;
 
   p_input_report = &input_report_array[COMPOSITE_REPORT_INDEX_CONSUMER];
   p_input_report->max_len = 2;
   p_input_report->rep_ref.report_id = COMPOSITE_REPORT_ID_CONSUMER;
   p_input_report->rep_ref.report_type = BLE_HIDS_REP_TYPE_INPUT;
 
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &p_input_report->security_mode.cccd_write_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &p_input_report->security_mode.read_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &p_input_report->security_mode.write_perm);
+  p_input_report->sec.cccd_wr = SEC_JUST_WORKS;
+  p_input_report->sec.wr      = SEC_JUST_WORKS;
+  p_input_report->sec.rd      = SEC_JUST_WORKS;
 
   p_input_report = &input_report_array[COMPOSITE_REPORT_INDEX_ABS_MOUSE];
   p_input_report->max_len = 2;
   p_input_report->rep_ref.report_id = COMPOSITE_REPORT_ID_ABS_MOUSE;
   p_input_report->rep_ref.report_type = BLE_HIDS_REP_TYPE_INPUT;
 
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &p_input_report->security_mode.cccd_write_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &p_input_report->security_mode.read_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &p_input_report->security_mode.write_perm);
+  p_input_report->sec.cccd_wr = SEC_JUST_WORKS;
+  p_input_report->sec.wr      = SEC_JUST_WORKS;
+  p_input_report->sec.rd      = SEC_JUST_WORKS;
 
   p_output_report = &output_report_array[OUTPUT_REPORT_INDEX];
   p_output_report->max_len = OUTPUT_REPORT_MAX_LEN;
   p_output_report->rep_ref.report_id = OUTPUT_REP_REF_ID;
   p_output_report->rep_ref.report_type = BLE_HIDS_REP_TYPE_OUTPUT;
 
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &p_output_report->security_mode.read_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &p_output_report->security_mode.write_perm);
+  p_output_report->sec.wr = SEC_JUST_WORKS;
+  p_output_report->sec.rd = SEC_JUST_WORKS;
 
   hid_info_flags = HID_INFO_FLAG_REMOTE_WAKE_MSK
       | HID_INFO_FLAG_NORMALLY_CONNECTABLE_MSK;
@@ -739,42 +715,24 @@ void composite_service_init(void) {
   composite_service_init_obj.included_services_count = 0;
   composite_service_init_obj.p_included_services_array = NULL;
 
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &composite_service_init_obj.rep_map.security_mode.read_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(
-      &composite_service_init_obj.rep_map.security_mode.write_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &composite_service_init_obj.hid_information.security_mode.read_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(
-      &composite_service_init_obj.hid_information.security_mode.write_perm);
-
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &composite_service_init_obj.security_mode_boot_kb_inp_rep.cccd_write_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &composite_service_init_obj.security_mode_boot_kb_inp_rep.read_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(
-      &composite_service_init_obj.security_mode_boot_kb_inp_rep.write_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &composite_service_init_obj.security_mode_boot_kb_outp_rep.read_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &composite_service_init_obj.security_mode_boot_kb_outp_rep.write_perm);
-
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &composite_service_init_obj.security_mode_boot_mouse_inp_rep.cccd_write_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &composite_service_init_obj.security_mode_boot_mouse_inp_rep.read_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(
-      &composite_service_init_obj.security_mode_boot_mouse_inp_rep.write_perm);
-
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &composite_service_init_obj.security_mode_protocol.read_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &composite_service_init_obj.security_mode_protocol.write_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(
-      &composite_service_init_obj.security_mode_ctrl_point.read_perm);
-  BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(
-      &composite_service_init_obj.security_mode_ctrl_point.write_perm);
-
+    composite_service_init_obj.rep_map.rd_sec         = SEC_JUST_WORKS;
+    //composite_service_init_obj.rep_map.wr_sec         = SEC_JUST_WORKS;
+    composite_service_init_obj.hid_information.rd_sec = SEC_JUST_WORKS;
+   // composite_service_init_obj.hid_information.wr_sec = SEC_JUST_WORKS;
+    
+    composite_service_init_obj.boot_kb_inp_rep_sec.cccd_wr = SEC_JUST_WORKS;
+    composite_service_init_obj.boot_kb_inp_rep_sec.rd      = SEC_JUST_WORKS;
+    composite_service_init_obj.boot_kb_inp_rep_sec.wr      = SEC_JUST_WORKS;
+    
+    composite_service_init_obj.boot_mouse_inp_rep_sec.cccd_wr = SEC_JUST_WORKS;
+    composite_service_init_obj.boot_mouse_inp_rep_sec.rd      = SEC_JUST_WORKS;
+    composite_service_init_obj.boot_mouse_inp_rep_sec.wr      = SEC_JUST_WORKS;
+    
+    composite_service_init_obj.protocol_mode_rd_sec = SEC_JUST_WORKS;
+    composite_service_init_obj.protocol_mode_wr_sec = SEC_JUST_WORKS;
+    //composite_service_init_obj.ctrl_point_rd_sec    = SEC_JUST_WORKS;
+    composite_service_init_obj.ctrl_point_wr_sec    = SEC_JUST_WORKS;
+    
   err_code = ble_hids_init(&m_hids_composite, &composite_service_init_obj);
   APP_ERROR_CHECK(err_code);
 }

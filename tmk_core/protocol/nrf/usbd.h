@@ -2,6 +2,11 @@
 #define TMK_CORE_PROTOCOL_NRF_NRF52_USBD_H_
 
 #include "host.h"
+#include "nrf_drv_usbd.h"
+#include "nrf_drv_clock.h"
+#include "app_usbd.h"
+#include "app_usbd_core.h"
+
 #if defined(NRF52840_XXAA) && NRF_SDK_MAJOR_VER==15
 int usbd_init(void);
 void usbd_enable(void);

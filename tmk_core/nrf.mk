@@ -292,9 +292,9 @@ ifeq ($(NRFSDK_VER), 12)
         $(NRFSDK_ROOT)/components/libraries/usbd/app_usbd.c \
         $(NRFSDK_ROOT)/components/libraries/usbd/app_usbd_core.c \
         $(NRFSDK_ROOT)/components/libraries/usbd/app_usbd_string_desc.c \
-        $(NRFSDK_ROOT)/components/drivers_nrf/usbd/nrf_drv_usbd.c \
-        $(NRFSDK_ROOT)/components/drivers_nrf/systick/nrf_drv_systick.c \
-        $(NRFSDK_ROOT)/components/drivers_nrf/power/nrf_drv_power.c \
+        $(NRFSDK_ROOT)$(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_systick.c \
+        $(NRFSDK_ROOT)/integration/nrfx/legacy/nrf_drv_clock.c \
+        $(NRFSDK_ROOT)/integration/nrfx/legacy/nrf_drv_power.c \
 
   #      $(NRFSDK_ROOT)/components/libraries/usbd/class/hid/kbd/app_usbd_hid_kbd.c \
         $(NRFSDK_ROOT)/components/libraries/usbd/class/hid/mouse/app_usbd_hid_mouse.c \
@@ -391,12 +391,12 @@ endif
 
 ifeq ($(NRFSDK_VER), 15)
 NRFLIBSRC += \
-  $(NRFSDK_ROOT)/components/libraries/experimental_log/src/nrf_log_backend_rtt.c \
-  $(NRFSDK_ROOT)/components/libraries/experimental_log/src/nrf_log_backend_serial.c \
-  $(NRFSDK_ROOT)/components/libraries/experimental_log/src/nrf_log_backend_uart.c \
-  $(NRFSDK_ROOT)/components/libraries/experimental_log/src/nrf_log_default_backends.c \
-  $(NRFSDK_ROOT)/components/libraries/experimental_log/src/nrf_log_frontend.c \
-  $(NRFSDK_ROOT)/components/libraries/experimental_log/src/nrf_log_str_formatter.c \
+  $(NRFSDK_ROOT)/components/libraries/log/src/nrf_log_backend_rtt.c \
+  $(NRFSDK_ROOT)/components/libraries/log/src/nrf_log_backend_serial.c \
+  $(NRFSDK_ROOT)/components/libraries/log/src/nrf_log_backend_uart.c \
+  $(NRFSDK_ROOT)/components/libraries/log/src/nrf_log_default_backends.c \
+  $(NRFSDK_ROOT)/components/libraries/log/src/nrf_log_frontend.c \
+  $(NRFSDK_ROOT)/components/libraries/log/src/nrf_log_str_formatter.c \
   $(NRFSDK_ROOT)/components/libraries/button/app_button.c \
   $(NRFSDK_ROOT)/components/libraries/util/app_error.c \
   $(NRFSDK_ROOT)/components/libraries/util/app_error_handler_gcc.c \
@@ -416,9 +416,10 @@ NRFLIBSRC += \
   $(NRFSDK_ROOT)/external/fprintf/nrf_fprintf_format.c \
   $(NRFSDK_ROOT)/components/libraries/fstorage/nrf_fstorage.c \
   $(NRFSDK_ROOT)/components/libraries/fstorage/nrf_fstorage_sd.c \
-  $(NRFSDK_ROOT)/components/libraries/experimental_memobj/nrf_memobj.c \
+  $(NRFSDK_ROOT)/components/libraries/memobj/nrf_memobj.c \
   $(NRFSDK_ROOT)/components/libraries/pwr_mgmt/nrf_pwr_mgmt.c \
   $(NRFSDK_ROOT)/components/libraries/experimental_section_vars/nrf_section_iter.c \
+  $(NRFSDK_ROOT)/components/libraries/ringbuf/nrf_ringbuf.c \
   $(NRFSDK_ROOT)/components/libraries/strerror/nrf_strerror.c \
   $(NRFSDK_ROOT)/integration/nrfx/legacy/nrf_drv_clock.c \
   $(NRFSDK_ROOT)/integration/nrfx/legacy/nrf_drv_uart.c \
@@ -427,12 +428,12 @@ NRFLIBSRC += \
   $(NRFSDK_ROOT)/modules/nrfx/drivers/src/nrfx_gpiote.c \
   $(NRFSDK_ROOT)/modules/nrfx/drivers/src/nrfx_clock.c \
   $(NRFSDK_ROOT)/modules/nrfx/drivers/src/nrfx_power.c \
-  $(NRFSDK_ROOT)/modules/nrfx/drivers/src/nrfx_power_clock.c \
   $(NRFSDK_ROOT)/modules/nrfx/drivers/src/prs/nrfx_prs.c \
   $(NRFSDK_ROOT)/modules/nrfx/drivers/src/nrfx_uart.c \
   $(NRFSDK_ROOT)/modules/nrfx/drivers/src/nrfx_uarte.c \
   $(NRFSDK_ROOT)/modules/nrfx/drivers/src/nrfx_saadc.c \
   $(NRFSDK_ROOT)/modules/nrfx/drivers/src/nrfx_spim.c \
+  $(NRFSDK_ROOT)/modules/nrfx/drivers/src/nrfx_systick.c \
   $(NRFSDK_ROOT)/modules/nrfx/drivers/src/nrfx_twi.c \
   $(NRFSDK_ROOT)/modules/nrfx/drivers/src/nrfx_twim.c \
   $(NRFSDK_ROOT)/modules/nrfx/drivers/src/nrfx_twis.c \
@@ -454,11 +455,11 @@ NRFLIBSRC += \
   $(NRFSDK_ROOT)/components/ble/peer_manager/peer_id.c \
   $(NRFSDK_ROOT)/components/ble/peer_manager/peer_manager.c \
   $(NRFSDK_ROOT)/components/ble/peer_manager/pm_buffer.c \
-  $(NRFSDK_ROOT)/components/ble/peer_manager/pm_mutex.c \
   $(NRFSDK_ROOT)/components/ble/peer_manager/security_manager.c \
   $(NRFSDK_ROOT)/components/ble/ble_services/ble_bas/ble_bas.c \
   $(NRFSDK_ROOT)/components/ble/ble_services/ble_dis/ble_dis.c \
   $(NRFSDK_ROOT)/components/ble/ble_services/ble_hids/ble_hids.c \
+  $(NRFSDK_ROOT)/modules/nrfx/soc/nrfx_atomic.c \
   $(NRFSDK_ROOT)/components/softdevice/common/nrf_sdh.c \
   $(NRFSDK_ROOT)/components/softdevice/common/nrf_sdh_soc.c \
   $(NRFSDK_ROOT)/components/libraries/queue/nrf_queue.c \
@@ -472,7 +473,7 @@ NRFLIBSRC += \
   $(NRFSDK_ROOT)/components/libraries/usbd/app_usbd.c \
   $(NRFSDK_ROOT)/components/libraries/usbd/app_usbd_string_desc.c \
   $(NRFSDK_ROOT)/components/libraries/usbd/class/dummy/app_usbd_dummy.c \
-  $(NRFSDK_ROOT)/components/drivers_nrf/usbd/nrf_drv_usbd.c \
+  $(NRFSDK_ROOT)/modules/nrfx/drivers/src/nrfx_usbd.c
 
 NRFSRC +=  $(NRFSDK_ROOT)/modules/nrfx/mdk/gcc_startup_nrf52840.S \
   $(NRFSDK_ROOT)/components/libraries/usbd/app_usbd_core.c \
@@ -516,18 +517,18 @@ EXTRAINCDIRS += \
   $(NRFSDK_ROOT)/components/libraries/usbd/class/msc \
   $(NRFSDK_ROOT)/components/libraries/usbd/class/hid \
   $(NRFSDK_ROOT)/modules/nrfx/hal \
-  $(NRFSDK_ROOT)/components/libraries/experimental_log \
+  $(NRFSDK_ROOT)/components/libraries/log \
   $(NRFSDK_ROOT)/components/ble/ble_services/ble_gls \
   $(NRFSDK_ROOT)/components/libraries/fstorage \
   $(NRFSDK_ROOT)/components/nfc/ndef/text \
   $(NRFSDK_ROOT)/components/libraries/mutex \
   $(NRFSDK_ROOT)/components/libraries/gpiote \
-  $(NRFSDK_ROOT)/components/libraries/experimental_log/src \
+  $(NRFSDK_ROOT)/components/libraries/log/src \
   $(NRFSDK_ROOT)/components/libraries/bootloader/ble_dfu \
   $(NRFSDK_ROOT)/components/nfc/ndef/connection_handover/common \
   $(NRFSDK_ROOT)/components/boards \
   $(NRFSDK_ROOT)/components/nfc/ndef/generic/record \
-  $(NRFSDK_ROOT)/components/libraries/experimental_memobj \
+  $(NRFSDK_ROOT)/components/libraries/memobj \
   $(NRFSDK_ROOT)/components/nfc/t4t_parser/cc_file \
   $(NRFSDK_ROOT)/components/ble/ble_advertising \
   $(NRFSDK_ROOT)/components/ble/ble_services/ble_bas_c \
@@ -584,7 +585,7 @@ EXTRAINCDIRS += \
   $(NRFSDK_ROOT)/components/nfc/t4t_parser/tlv \
   $(NRFSDK_ROOT)/components/libraries/sortlist \
   $(NRFSDK_ROOT)/components/libraries/spi_mngr \
-  $(NRFSDK_ROOT)/components/libraries/experimental_stack_guard \
+  $(NRFSDK_ROOT)/components/libraries/stack_guard \
   $(NRFSDK_ROOT)/components/libraries/led_softblink \
   $(NRFSDK_ROOT)/components/nfc/ndef/conn_hand_parser \
   $(NRFSDK_ROOT)/components/libraries/sdcard \
@@ -620,8 +621,9 @@ EXTRAINCDIRS += \
   $(NRFSDK_ROOT)/components/libraries/usbd \
   $(NRFSDK_ROOT)/components/nfc/ndef/connection_handover/ep_oob_rec \
   $(NRFSDK_ROOT)/external/segger_rtt \
+  $(NRFSDK_ROOT)/external/utf_converter \
   $(NRFSDK_ROOT)/components/libraries/atomic_fifo \
-  $(NRFSDK_ROOT)/components/libraries/experimental_ringbuf \
+  $(NRFSDK_ROOT)/components/libraries/ringbuf \
   $(NRFSDK_ROOT)/components/ble/ble_services/ble_lbs_c \
   $(NRFSDK_ROOT)/components/nfc/ndef/connection_handover/ble_pair_lib \
   $(NRFSDK_ROOT)/components/libraries/crypto \
@@ -919,28 +921,18 @@ bin: $(BUILD_DIR)/$(TARGET).bin sizeafter
 
 	python ./util/uf2conv.py $(BUILD_DIR)/$(TARGET).hex -c -f 0xADA52840 -o $(BUILD_DIR)/$(TARGET).uf2
 
+nrfutil: $(BUILD_DIR)/$(TARGET).bin cpfirmware sizeafter
+	nrfutil pkg generate --hw-version 52 --application-version 1 --sd-req 0xB6 --application $(BUILD_DIR)/$(TARGET).bin $(BUILD_DIR)/$(TARGET).zip
+	$(call EXEC_NRFUTIL)
+
 GREP ?= grep
-NRFUTIL ?= nrfutil
 
-$(TARGET).ble.zip: $(TARGET).bin
-	if ! type "nrfutil" > /dev/null 2>&1; then \
-		echo 'ERROR: nrfutil is not found'; exit 1;\
-	fi
-	$(NRFUTIL) pkg generate --debug-mode --hw-version 0 --sd-req 0x8C --key-file $(PRIV_KEY) --application $(TARGET).bin $(TARGET).zip
-
-dfu_ble: $(TARGET).ble.zip
-
-$(TARGET).zip: $(TARGET).bin
-	if ! type "nrfutil" > /dev/null 2>&1; then \
-		echo 'ERROR: nrfutil is not found'; exit 1;\
-	fi
-	$(NRFUTIL) pkg generate --debug-mode --hw-version 52 --sd-req 0xA9 --application $(TARGET).bin $(TARGET).zip
-
-nrfutil: $(TARGET).zip
+define EXEC_NRFUTIL
+	USB= ;\
 	if $(GREP) -q -s Microsoft /proc/version; then \
-		echo 'ERROR: nrfutil cannot be automated within the Windows Subsystem for Linux (WSL) currently.'; \
+		echo 'ERROR: NRF flashing cannot be automated within the Windows Subsystem for Linux (WSL) currently. Instead, take the .hex file generated and flash it using AVRDUDE, AVRDUDESS, or XLoader.'; \
 	else \
-		printf "Detecting USB port, put your controller into dfu-mode now."; \
+		printf "Detecting USB port, reset your controller now."; \
 		ls /dev/tty* > /tmp/1; \
 		while [ -z $$USB ]; do \
 			sleep 0.5; \
@@ -950,15 +942,18 @@ nrfutil: $(TARGET).zip
 			mv /tmp/2 /tmp/1; \
 		done; \
 		echo ""; \
-		echo "Detected controller on USB port at $$USB"; \
+		echo "Device $$USB has appeared; assuming it is the controller."; \
 		if $(GREP) -q -s 'MINGW\|MSYS' /proc/version; then \
 			USB=`echo "$$USB" | perl -pne 's/\/dev\/ttyS(\d+)/COM.($$1+1)/e'`; \
 			echo "Remapped MSYS2 USB port to $$USB"; \
+			sleep 1; \
+		else \
+			printf "Waiting for $$USB to become writable."; \
+			while [ ! -w "$$USB" ]; do sleep 0.5; printf "."; done; echo ""; \
 		fi; \
-		sleep 1; \
-		echo "Programming Started"; \
-		$(NRFUTIL) dfu usb_serial -pkg $(TARGET).zip -p $$USB; \
+		nrfutil dfu usb-serial -pkg $(BUILD_DIR)/$(TARGET).zip -p $$USB; \
 	fi
+            endef
 
 uf2: $(BUILD_DIR)/$(TARGET).bin
 	./util/uf2conv.py -f nrf52 -b 0x26000 -o $(TARGET).uf2 $(BUILD_DIR)/$(TARGET).bin -c
