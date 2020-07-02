@@ -9,7 +9,7 @@ extern rgblight_config_t rgblight_config;
 
 #ifdef RGB_MATRIX_ENABLE
 #include "rgb_matrix.h"
-#include "nrf/i2c.h"
+#include "i2c.h"
 extern rgb_config_t rgb_matrix_config;
 #endif
 

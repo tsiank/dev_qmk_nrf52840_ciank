@@ -236,7 +236,6 @@ enum usb_endpoints {
 
 // TODO - ARM_ATSAM
 
-//#if (NEXT_EPNUM - 1) > MAX_ENDPOINTS    //tsiank: occurs error if use this code.don't kown how to debug
 #if (defined(PROTOCOL_LUFA) && CDC_OUT_EPNUM > (ENDPOINT_TOTAL_ENDPOINTS - 1)) || \
   (defined(PROTOCOL_CHIBIOS) && CDC_OUT_EPNUM > USB_MAX_ENDPOINTS)
 #    error There are not enough available endpoints to support all functions. Please disable one or more of the following: Mouse Keys, Extra Keys, Console, NKRO, MIDI, Serial, Steno

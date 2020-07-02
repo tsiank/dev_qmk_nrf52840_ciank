@@ -283,12 +283,8 @@ int main(void) {
 
 #include "app_error.h"
 
-#if NRF_SDK_MAJOR_VER==15
 #include "nrf_strerror.h"
 #define ERR_TO_STRING(err_code) nrf_strerror_get(err_code)
-#else
-#define ERR_TO_STRING(err_code) (uint32_t)ERR_TO_STR(err_code)
-#endif
 
 __WEAK void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info)
 {
